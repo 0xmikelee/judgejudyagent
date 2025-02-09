@@ -1,4 +1,3 @@
-import { CdpWalletProvider } from "@coinbase/agentkit";
 // import { AgentKit } from "@coinbase/agentkit";
 import { approveWithdrawTransaction, getDeployedSafeClient } from "@/app/utils/agentHelper";
 
@@ -6,28 +5,11 @@ import { NextResponse } from "next/server";
 // import { createWalletClient } from "viem";
 // import { arbitrum } from "viem/chains";
 
-const walletData = {
-  walletId: "06be1f44-0b15-45a9-afd6-23d9a2817791",
-  seed: process.env.CDP_WALLET_SEED,
-  networkId: "base-sepolia",
-};
-
 export async function POST(request: Request) {
   try {
-    const provider = await CdpWalletProvider.configureWithWallet({
-      // Optional: Provide API key details. If not provided, it will attempt to configure from JSON.
-      apiKeyName: process.env.CDP_API_KEY_NAME,
-      apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY,
-
-      networkId: "base-sepolia", // other options: "base-mainnet", "ethereum-mainnet", "arbitrum-mainnet", "polygon-mainnet".
-      cdpWalletData: JSON.stringify(walletData),
-    });
-
     // const agentKit = await AgentKit.from({
     //   walletProvider: provider,
     // });
-
-    console.log("cdp provider", await provider.getAddress());
 
     const { safeAddress } = await request.json();
 
