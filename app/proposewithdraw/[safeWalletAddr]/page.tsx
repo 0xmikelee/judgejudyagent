@@ -2,12 +2,9 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useWallets } from "@privy-io/react-auth";
-import { baseSepolia } from "viem/chains";
+import { arbitrumSepolia } from "viem/chains";
 import { Address, createWalletClient, custom, Hex } from "viem";
-import {
-  proposeWithdrawTransaction,
-  getDeployedSafeClient,
-} from "@/app/utils/safeHelper";
+import { proposeWithdrawTransaction, getDeployedSafeClient } from "@/app/utils/safeHelper";
 
 export default function Page() {
   const [withdrawalValue, setWithdrawalValue] = useState<bigint | null>(null);
@@ -20,21 +17,18 @@ export default function Page() {
   const [requestSuccess, setRequestSuccess] = useState(false);
 
   async function getEmployerWalletClient() {
-    await employerPrivyWallet.switchChain(baseSepolia.id);
+    await employerPrivyWallet.switchChain(arbitrumSepolia.id);
     const provider = await employerPrivyWallet.getEthereumProvider();
 
     const walletClient = createWalletClient({
       account: employerPrivyWallet.address as Hex,
-      chain: baseSepolia,
+      chain: arbitrumSepolia,
       transport: custom(provider),
     });
 
     console.log("walletclient", walletClient);
 
-    const safeClient = await getDeployedSafeClient(
-      safeWalletAddr as Address,
-      walletClient
-    );
+    const safeClient = await getDeployedSafeClient(safeWalletAddr as Address, walletClient);
 
     console.log("safeclient", { safeClient });
     return safeClient;
@@ -46,11 +40,7 @@ export default function Page() {
     console.log("employerSafeClient", employerSafeClient);
     if (!employerSafeClient || !withdrawalValue) return;
 
-    const response = await proposeWithdrawTransaction(
-      employerSafeClient,
-      employerPrivyWallet.address,
-      withdrawalValue
-    );
+    const response = await proposeWithdrawTransaction(employerSafeClient, employerPrivyWallet.address, withdrawalValue);
 
     if (response) {
       setRequestSuccess(true);
@@ -60,9 +50,7 @@ export default function Page() {
 
   return (
     <div>
-      <h1 className="font-bold text-2xl w-full text-center py-5">
-        Propose Withdrawal
-      </h1>
+      <h1 className="font-bold text-2xl w-full text-center py-5">Propose Withdrawal</h1>
       <div className="flex flex-col p-5 w-[50%]">
         <div className="p-5">
           <p className="font-bold">Safe Wallet Contract Address:</p>
@@ -77,18 +65,12 @@ export default function Page() {
           <input
             type="number"
             className="border-solid border-black border-2"
-            onChange={(e) =>
-              setWithdrawalValue(e.target.value ? BigInt(e.target.value) : null)
-            }
+            onChange={(e) => setWithdrawalValue(e.target.value ? BigInt(e.target.value) : null)}
           />
           <button className="bg-blue-300 p-3" onClick={handleProposeWithdraw}>
             Propose Withdrawal
           </button>
-          {requestSuccess ? (
-            <p className="italic text-green-600 font-bold text-lg">
-              Successfully Requested
-            </p>
-          ) : null}
+          {requestSuccess ? <p className="italic text-green-600 font-bold text-lg">Successfully Requested</p> : null}
         </div>
       </div>
     </div>

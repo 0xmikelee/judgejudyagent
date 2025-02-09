@@ -1,16 +1,17 @@
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { Address } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
+import { arbitrumSepolia } from "viem/chains";
 import Safe, { getSafeAddressFromDeploymentTx } from "@safe-global/protocol-kit";
 import { CdpWalletProvider } from "@coinbase/agentkit";
 import SafeApiKit from "@safe-global/api-kit";
 
 const privateKey = process.env.AGENT_PRIVATE_KEY;
 
-const RPC_URL = "https://sepolia.base.org";
+// const RPC_URL = "https://sepolia.base.org";
+const RPC_URL = "https://arbitrum-sepolia-rpc.publicnode.com";
 
 const publicClient = createPublicClient({
-  chain: baseSepolia,
+  chain: arbitrumSepolia,
   transport: http(RPC_URL),
 });
 
@@ -68,7 +69,7 @@ export const transformTransport = (cdpProvider: CdpWalletProvider) => {
 export const createSafeFromAgent = async (agentAccount: CdpWalletProvider, employerAddress: Address, employeeAddress: Address) => {
   console.log(employerAddress);
 
-  const client = createWalletClient({ chain: baseSepolia, transport: transformTransport(agentAccount) });
+  const client = createWalletClient({ chain: arbitrumSepolia, transport: transformTransport(agentAccount) });
 
   const agentAddress = await agentAccount.getAddress();
   const safeClient = await Safe.init({
@@ -122,7 +123,7 @@ export const getDeployedSafeClient = async (safeAddress: Address) => {
 
 // not able to complete end to end :(
 export const getDeployedSafeClient_CDP = async (safeAddress: Address, cdpSigner: CdpWalletProvider) => {
-  const client = createWalletClient({ transport: transformTransport(cdpSigner), chain: baseSepolia });
+  const client = createWalletClient({ transport: transformTransport(cdpSigner), chain: arbitrumSepolia });
 
   console.log("client addresses, safeAddress", cdpSigner.getAddress(), safeAddress);
   const safeClient = await Safe.init({
@@ -142,7 +143,7 @@ export const getDeployedSafeClient_CDP = async (safeAddress: Address, cdpSigner:
 export const approveWithdrawTransaction = async (safeClient: Safe) => {
   // safe api clients
   const apiKit = new SafeApiKit({
-    chainId: BigInt(baseSepolia.id),
+    chainId: BigInt(arbitrumSepolia.id),
   });
 
   // check safe client deployed
