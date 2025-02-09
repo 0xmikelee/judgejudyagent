@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { Address } from "viem/accounts";
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrum } from "viem/chains";
 import Safe, { getSafeAddressFromDeploymentTx } from "@safe-global/protocol-kit";
 import { CdpWalletProvider } from "@coinbase/agentkit";
 import SafeApiKit from "@safe-global/api-kit";
@@ -8,10 +8,10 @@ import SafeApiKit from "@safe-global/api-kit";
 const privateKey = process.env.AGENT_PRIVATE_KEY;
 
 // const RPC_URL = "https://sepolia.base.org";
-const RPC_URL = "https://arbitrum-sepolia-rpc.publicnode.com";
+const RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/euJT3Qp22t949OtHe_7K4bjk1ahsb9jN";
 
 const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
+  chain: arbitrum,
   transport: http(RPC_URL),
 });
 
@@ -69,7 +69,7 @@ export const transformTransport = (cdpProvider: CdpWalletProvider) => {
 export const createSafeFromAgent = async (agentAccount: CdpWalletProvider, employerAddress: Address, employeeAddress: Address) => {
   console.log(employerAddress);
 
-  const client = createWalletClient({ chain: arbitrumSepolia, transport: transformTransport(agentAccount) });
+  const client = createWalletClient({ chain: arbitrum, transport: transformTransport(agentAccount) });
 
   const agentAddress = await agentAccount.getAddress();
   const safeClient = await Safe.init({
@@ -123,7 +123,7 @@ export const getDeployedSafeClient = async (safeAddress: Address) => {
 
 // not able to complete end to end :(
 export const getDeployedSafeClient_CDP = async (safeAddress: Address, cdpSigner: CdpWalletProvider) => {
-  const client = createWalletClient({ transport: transformTransport(cdpSigner), chain: arbitrumSepolia });
+  const client = createWalletClient({ transport: transformTransport(cdpSigner), chain: arbitrum });
 
   console.log("client addresses, safeAddress", cdpSigner.getAddress(), safeAddress);
   const safeClient = await Safe.init({
@@ -143,7 +143,7 @@ export const getDeployedSafeClient_CDP = async (safeAddress: Address, cdpSigner:
 export const approveWithdrawTransaction = async (safeClient: Safe) => {
   // safe api clients
   const apiKit = new SafeApiKit({
-    chainId: BigInt(arbitrumSepolia.id),
+    chainId: BigInt(arbitrum.id),
   });
 
   // check safe client deployed

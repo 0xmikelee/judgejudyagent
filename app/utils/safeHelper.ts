@@ -1,9 +1,7 @@
-import Safe, {
-  getSafeAddressFromDeploymentTx,
-} from "@safe-global/protocol-kit";
+import Safe, { getSafeAddressFromDeploymentTx } from "@safe-global/protocol-kit";
 import SafeApiKit from "@safe-global/api-kit";
 import { Address, createPublicClient, http, WalletClient } from "viem";
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrum } from "viem/chains";
 
 export const getAgentSigner = async () => {
   return null;
@@ -13,16 +11,16 @@ export const getAgentSigner = async () => {
 const AGENT_SIGNER_ADDRESS = "0x1942cC7E232E8d89d2012Ea8267339419f2712a4";
 // const AGENT_SIGNER_ADDRESS = "0x897A99e53440703eF4817215821926F6067091f7"; // CDP
 // const RPC_URL = "https://sepolia.base.org";
-const RPC_URL = "https://arbitrum-sepolia-rpc.publicnode.com";
+const RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/euJT3Qp22t949OtHe_7K4bjk1ahsb9jN";
 
 const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
+  chain: arbitrum,
   transport: http(RPC_URL),
 });
 
 // safe api clients
 const apiKit = new SafeApiKit({
-  chainId: BigInt(arbitrumSepolia.id),
+  chainId: BigInt(arbitrum.id),
 });
 
 /**
@@ -41,11 +39,7 @@ const apiKit = new SafeApiKit({
  */
 
 // internal functions, invoke during new safe account creation
-const storeSafeRecord = async (
-  safeAddress: string,
-  employerAddress: string,
-  employeeAddress: string
-) => {
+const storeSafeRecord = async (safeAddress: string, employerAddress: string, employeeAddress: string) => {
   const response = await fetch("/api/safe", {
     method: "POST",
     headers: {
@@ -78,10 +72,7 @@ export const listRecordsForEmployee = async (employeeAddress: Address) => {
 };
 
 // get / create the safe clients
-export const getDeployedSafeClient = async (
-  safeAddress: Address,
-  signer: WalletClient
-) => {
+export const getDeployedSafeClient = async (safeAddress: Address, signer: WalletClient) => {
   const safeClient = await Safe.init({
     provider: signer.transport,
     safeAddress: safeAddress,
@@ -96,10 +87,7 @@ export const getDeployedSafeClient = async (
 };
 
 // assuming only employer will start this process, employer = signer.
-export const getNewSafeClient = async (
-  employerAccount: WalletClient,
-  employeeAddress: Address
-) => {
+export const getNewSafeClient = async (employerAccount: WalletClient, employeeAddress: Address) => {
   console.log(employerAccount.transport);
 
   const employerAddress = (await employerAccount.requestAddresses())[0];
@@ -121,14 +109,13 @@ export const getNewSafeClient = async (
     return safeClient;
   }
 
-  const deploymentTransaction =
-    await safeClient.createSafeDeploymentTransaction();
+  const deploymentTransaction = await safeClient.createSafeDeploymentTransaction();
 
   const transactionHash = await employerAccount.sendTransaction({
     to: deploymentTransaction.to,
     value: BigInt(deploymentTransaction.value),
     data: deploymentTransaction.data as `0x${string}`,
-    chain: arbitrumSepolia,
+    chain: arbitrum,
     account: employerAddress,
   });
 
@@ -146,23 +133,13 @@ export const getNewSafeClient = async (
 
   await storeSafeRecord(safeAddress, employerAddress, employeeAddress);
 
-  console.log(
-    "safeclient",
-    deploymentTransaction,
-    await safeClient.isSafeDeployed(),
-    await safeClient.getAddress(),
-    safeClient.getPredictedSafe()
-  );
+  console.log("safeclient", deploymentTransaction, await safeClient.isSafeDeployed(), await safeClient.getAddress(), safeClient.getPredictedSafe());
 
   return safeClient;
 };
 
 // propose a transaction to the safe
-export const proposeWithdrawTransaction = async (
-  safeClient: Safe,
-  to: Address,
-  value: bigint
-) => {
+export const proposeWithdrawTransaction = async (safeClient: Safe, to: Address, value: bigint) => {
   const tx = await safeClient.createTransaction({
     transactions: [
       {
@@ -180,10 +157,7 @@ export const proposeWithdrawTransaction = async (
   const signature = await safeClient.signHash(safeTxHash);
 
   console.log("signature @ proposeWithdrawTransaction", signature);
-  console.log(
-    "safeclient.getAddress() @ proposeWithdrawTransaction",
-    await safeClient.getAddress()
-  );
+  console.log("safeclient.getAddress() @ proposeWithdrawTransaction", await safeClient.getAddress());
 
   // Now the transaction with the signature is sent to the Transaction Service with the Api Kit:
   await apiKit.proposeTransaction({
@@ -205,9 +179,7 @@ export const approveWithdrawTransaction = async (safeClient: Safe) => {
   }
 
   // Get pending transactions that need a signature
-  const pendingTransactions = await apiKit.getPendingTransactions(
-    await safeClient.getAddress()
-  );
+  const pendingTransactions = await apiKit.getPendingTransactions(await safeClient.getAddress());
   // We assume there is only one pending transaction for the safe address
   const transaction = pendingTransactions.results[0];
   // sign the transaction

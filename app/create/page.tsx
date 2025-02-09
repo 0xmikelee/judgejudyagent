@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getNewSafeClient } from "@/app/utils/safeHelper";
 import { useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom, Hex } from "viem";
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrum } from "viem/chains";
 
 interface ResignationChecklist {
   resignation_checklist: {
@@ -87,12 +87,12 @@ export default function Page() {
     if (!employeeAddress) return;
     const employerPrivyWallet = wallets[0] || null;
 
-    await employerPrivyWallet.switchChain(arbitrumSepolia.id);
+    await employerPrivyWallet.switchChain(arbitrum.id);
 
     const provider = await employerPrivyWallet.getEthereumProvider();
     const walletClient = createWalletClient({
       account: employerPrivyWallet.address as Hex,
-      chain: arbitrumSepolia,
+      chain: arbitrum,
       transport: custom(provider),
     });
 

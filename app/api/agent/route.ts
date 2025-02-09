@@ -4,7 +4,7 @@ import { approveWithdrawTransaction, getDeployedSafeClient } from "@/app/utils/a
 
 import { NextResponse } from "next/server";
 // import { createWalletClient } from "viem";
-// import { arbitrumSepolia } from "viem/chains";
+// import { arbitrum } from "viem/chains";
 
 const walletData = {
   walletId: "06be1f44-0b15-45a9-afd6-23d9a2817791",

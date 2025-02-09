@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useWallets } from "@privy-io/react-auth";
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrum } from "viem/chains";
 import { Address, createWalletClient, custom, Hex } from "viem";
 import { proposeWithdrawTransaction, getDeployedSafeClient } from "@/app/utils/safeHelper";
 
@@ -17,12 +17,12 @@ export default function Page() {
   const [requestSuccess, setRequestSuccess] = useState(false);
 
   async function getEmployerWalletClient() {
-    await employerPrivyWallet.switchChain(arbitrumSepolia.id);
+    await employerPrivyWallet.switchChain(arbitrum.id);
     const provider = await employerPrivyWallet.getEthereumProvider();
 
     const walletClient = createWalletClient({
       account: employerPrivyWallet.address as Hex,
-      chain: arbitrumSepolia,
+      chain: arbitrum,
       transport: custom(provider),
     });
 
