@@ -3,24 +3,26 @@ import Safe, {
 } from "@safe-global/protocol-kit";
 import SafeApiKit from "@safe-global/api-kit";
 import { Address, createPublicClient, http, WalletClient } from "viem";
-import { baseSepolia } from "viem/chains";
+import { arbitrumSepolia } from "viem/chains";
 
 export const getAgentSigner = async () => {
   return null;
 };
 
 // TODO: get the agent signer address from agentkit / env
-const AGENT_SIGNER_ADDRESS = "0x897A99e53440703eF4817215821926F6067091f7";
-const RPC_URL = "https://sepolia.base.org";
+const AGENT_SIGNER_ADDRESS = "0x1942cC7E232E8d89d2012Ea8267339419f2712a4";
+// const AGENT_SIGNER_ADDRESS = "0x897A99e53440703eF4817215821926F6067091f7"; // CDP
+// const RPC_URL = "https://sepolia.base.org";
+const RPC_URL = "https://arbitrum-sepolia-rpc.publicnode.com";
 
 const publicClient = createPublicClient({
-  chain: baseSepolia,
+  chain: arbitrumSepolia,
   transport: http(RPC_URL),
 });
 
 // safe api clients
 const apiKit = new SafeApiKit({
-  chainId: BigInt(baseSepolia.id),
+  chainId: BigInt(arbitrumSepolia.id),
 });
 
 /**
@@ -145,7 +147,7 @@ export const getNewSafeClient = async (
     to: deploymentTransaction.to,
     value: BigInt(deploymentTransaction.value),
     data: deploymentTransaction.data as `0x${string}`,
-    chain: baseSepolia,
+    chain: arbitrumSepolia,
     account: employerAddress,
   });
 
