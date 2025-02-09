@@ -46,54 +46,35 @@ const storeSafeRecord = async (
   employerAddress: string,
   employeeAddress: string
 ) => {
-  try {
-    // Get existing records from localStorage
-    const existingRecords = JSON.parse(
-      localStorage.getItem("safeWallets") || "[]"
-    );
-
-    // Add new record
-    existingRecords.push({
-      safeAddress,
+  const response = await fetch("/api/safe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      safeAddress: safeAddress,
       employerAddress,
       employeeAddress,
-      createdAt: new Date().toISOString(),
-    });
-
-    // Store updated records
-    localStorage.setItem("safeWallets", JSON.stringify(existingRecords));
-
-    console.log("Stored safe wallet in localStorage:", safeAddress);
-  } catch (error) {
-    console.error("Error storing safe wallet in localStorage:", error);
-  }
+    }),
+  });
+  const data = await response.json();
+  console.log(data);
 };
 
-// Add these new helper functions for retrieving records
-export const getRecordsFromLocalStorage = () => {
-  try {
-    return JSON.parse(localStorage.getItem("safeWallets") || "[]");
-  } catch (error) {
-    console.error("Error reading from localStorage:", error);
-    return [];
-  }
-};
-
-// Update the listing functions to use localStorage
 export const listRecordsForEmployer = async (employerAddress: Address) => {
-  const records = getRecordsFromLocalStorage();
-  return records.filter(
-    (record: any) =>
-      record.employerAddress.toLowerCase() === employerAddress.toLowerCase()
-  );
+  const response = await fetch(`/api/safe?employerAddress=${employerAddress}`);
+  const data = await response.json();
+  console.log(data);
+
+  return data;
 };
 
 export const listRecordsForEmployee = async (employeeAddress: Address) => {
-  const records = getRecordsFromLocalStorage();
-  return records.filter(
-    (record: any) =>
-      record.employeeAddress.toLowerCase() === employeeAddress.toLowerCase()
-  );
+  const response = await fetch(`/api/safe?employeeAddress=${employeeAddress}`);
+  const data = await response.json();
+  console.log(data);
+
+  return data;
 };
 
 // get / create the safe clients
