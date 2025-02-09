@@ -1,9 +1,10 @@
-import { AgentKit, CdpWalletProvider } from "@coinbase/agentkit";
-import { approveWithdrawTransaction, getDeployedSafeClient, transformTransport } from "@/app/utils/agentHelper";
+import { CdpWalletProvider } from "@coinbase/agentkit";
+// import { AgentKit } from "@coinbase/agentkit";
+import { approveWithdrawTransaction, getDeployedSafeClient } from "@/app/utils/agentHelper";
 
 import { NextResponse } from "next/server";
-import { createWalletClient } from "viem";
-import { baseSepolia } from "viem/chains";
+// import { createWalletClient } from "viem";
+// import { baseSepolia } from "viem/chains";
 
 const walletData = {
   walletId: "06be1f44-0b15-45a9-afd6-23d9a2817791",
@@ -22,9 +23,9 @@ export async function POST(request: Request) {
       cdpWalletData: JSON.stringify(walletData),
     });
 
-    const agentKit = await AgentKit.from({
-      walletProvider: provider,
-    });
+    // const agentKit = await AgentKit.from({
+    //   walletProvider: provider,
+    // });
 
     console.log("cdp provider", await provider.getAddress());
 
@@ -34,7 +35,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Safe address is required" });
     }
 
-    const safeClient = await getDeployedSafeClient(safeAddress, provider);
+    const safeClient = await getDeployedSafeClient(safeAddress);
+    // const safeClient = await getDeployedSafeClient_CDP(safeAddress, provider);
     // Create a new multisig agent in the database
 
     const result = await approveWithdrawTransaction(safeClient);
