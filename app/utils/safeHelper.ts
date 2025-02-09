@@ -8,7 +8,8 @@ export const getAgentSigner = async () => {
 };
 
 // TODO: get the agent signer address from agentkit / env
-const AGENT_SIGNER_ADDRESS = "0x897A99e53440703eF4817215821926F6067091f7";
+const AGENT_SIGNER_ADDRESS = "0x1942cC7E232E8d89d2012Ea8267339419f2712a4";
+// const AGENT_SIGNER_ADDRESS = "0x897A99e53440703eF4817215821926F6067091f7"; // CDP
 const RPC_URL = "https://sepolia.base.org";
 
 const publicClient = createPublicClient({
