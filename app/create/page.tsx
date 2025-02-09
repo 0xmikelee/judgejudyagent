@@ -105,7 +105,16 @@ export default function Page() {
     setSafeWalletAddr(contractAddr);
     console.log(safeClient);
 
-    // console.log({  });
+    const storeObj = {
+      createdAt: new Date().toUTCString(),
+      safeWalletAddress: contractAddr,
+      employerAddress: employerPrivyWallet.address,
+      employeeAddress,
+    };
+    const existingTx = localStorage.getItem("transactions") || "[]";
+    const newTx = JSON.parse(existingTx);
+    localStorage.setItem("transactions", JSON.stringify([...newTx, storeObj]));
+    console.log({ newTx });
   };
 
   return (

@@ -2,21 +2,21 @@
 import Transaction from "@/app/_components/Transaction";
 import Link from "next/link";
 import { useWallets } from "@privy-io/react-auth";
-import {
-  listRecordsForEmployee,
-  listRecordsForEmployer,
-} from "./utils/safeHelper";
+// import {
+//   listRecordsForEmployee,
+//   listRecordsForEmployer,
+// } from "./utils/safeHelper";
 import { useEffect, useState } from "react";
 
 interface EmployerTransaction {
   createdAt: string;
   employeeAddress: string;
-  address: string;
+  safeWalletAddress: string;
 }
 interface EmployeeTransaction {
   createdAt: string;
   employerAddress: string;
-  address: string;
+  safeWalletAddress: string;
 }
 
 export default function Home() {
@@ -30,21 +30,35 @@ export default function Home() {
 
   const handleGetEmployerTransactions = async () => {
     console.log("Run Employer Txs");
-    if (!walletAddr) return;
+    // if (!walletAddr) return;
     console.log("Run Employer Txs -- start");
     // console.log({ walletAddr });
-    const transactions = await listRecordsForEmployer(walletAddr);
-    if (!transactions.error) setEmployerTx(transactions);
+    // const transactions = await listRecordsForEmployer(walletAddr);
+    // if (!transactions.error) setEmployerTx(transactions);
 
-    console.log({ transactions });
+    // console.log({ transactions });
+    const txns = JSON.parse(localStorage.getItem("transactions") || "[]");
+    const temp = txns.filter((tx: EmployerTransaction) => {
+      if (txns.employerAddress === walletAddr) return tx;
+    });
+    console.log("Employer", { temp });
+    setEmployerTx(temp);
   };
 
   const handleGetEmployeeTransactions = async () => {
     console.log("Run Employee Txs");
-    if (!walletAddr) return;
+    // if (!walletAddr) return;
     console.log("Run Employee Txs -- start");
-    const transactions = await listRecordsForEmployee(walletAddr);
-    if (!transactions.error) setEmployeeTx(transactions);
+    // const transactions = await listRecordsForEmployee(walletAddr);
+    // if (!transactions.error) setEmployeeTx(transactions);
+
+    const txns = JSON.parse(localStorage.getItem("transactions") || "[]");
+    const temp = txns.filter((tx: EmployeeTransaction) => {
+      console.log({ walletAddr });
+      if (txns.employeeAddress === walletAddr) return tx;
+    });
+    console.log("Employee", { temp });
+    setEmployeeTx(temp);
   };
 
   useEffect(() => {
@@ -72,7 +86,7 @@ export default function Home() {
               key={i}
               createdDate={tx.createdAt}
               walletAddress={tx.employeeAddress}
-              safeWalletAddress={tx.address}
+              safeWalletAddress={tx.safeWalletAddress}
             />
           ))
         ) : (
@@ -89,7 +103,7 @@ export default function Home() {
               key={i}
               createdDate={tx.createdAt}
               walletAddress={tx.employerAddress}
-              safeWalletAddress={tx.address}
+              safeWalletAddress={tx.safeWalletAddress}
             />
           ))
         ) : (
